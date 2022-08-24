@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import bcrypt from 'bcryptjs'
 
 const userShcema = mongoose.Schema(
   {
@@ -25,6 +26,19 @@ const userShcema = mongoose.Schema(
     timeStamps: true,
   }
 )
+
+userShcema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password)
+}
+
+userShcema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    next()
+  }
+
+  const salt = await bcrypt.genSalt(10)
+  this.password = await bcrypt.hash(this.password, salt)
+})
 
 const User = mongoose.model('User', userShcema)
 
