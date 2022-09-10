@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { useParams } from 'react-router-dom'
 import {
   PRODUCT_DETAILS_FAIL,
   PRODUCT_DETAILS_REQUEST,
@@ -30,6 +31,7 @@ export const listProducts = () => async (dispatch) => {
 export const listProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST })
+
     const { data } = await axios.get(`/api/products/${id}`)
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,

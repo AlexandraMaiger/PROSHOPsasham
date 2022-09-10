@@ -1,35 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  Row,
-  Col,
-  Image,
-  ListGroup,
-  Card,
-  Button,
-  ListGroupItem,
-  Form,
-} from 'react-bootstrap'
+import { Row, Col, Image, ListGroup, Card, Button, Form } from 'react-bootstrap'
 import Rating from '../components/Rating'
-import { listProductDetails } from '../actions/productActions'
-import Loader from '../components/Loader'
 import Message from '../components/Message'
+import Loader from '../components/Loader'
+import { listProductDetails } from '../actions/productActions'
+import { addToCart } from '../actions/cartActions'
 
-const ProductScreen = (history) => {
+const ProductScreen = () => {
   const [qty, setQty] = useState(1)
+  // const [rating, serRaiting] = useState(0)
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const productDetails = useSelector((state) => state.productDetails)
+  const { loading, error, product } = productDetails
 
   const params = useParams()
-  const dispatch = useDispatch()
-  const productDeatil = useSelector((state) => state.productDeatil)
-  const { loading, error, product } = productDeatil
 
   useEffect(() => {
     dispatch(listProductDetails(params.id))
-  }, [dispatch, params.id])
-  const navigate = useNavigate()
+  }, [dispatch, params])
+
   const addToCartHandler = () => {
-    navigate(`/cart/${params.id}?qty=${qty}`)
+    // navigate(`/cart/${params.id}?qty=${qty}`)
+    dispatch(addToCart(product._id, qty))
+    navigate('/cart')
   }
 
   return (
@@ -48,38 +46,40 @@ const ProductScreen = (history) => {
           </Col>
           <Col md={3}>
             <ListGroup variant='flush'>
-              <ListGroupItem>
+              <ListGroup.Item>
                 <h3>{product.name}</h3>
-              </ListGroupItem>
-              <ListGroupItem>
+              </ListGroup.Item>
+              <ListGroup.Item>
                 <Rating
                   value={product.rating}
                   text={`${product.numReviews} Reviews`}
                 ></Rating>
-              </ListGroupItem>
-              <ListGroupItem>Price: ${product.price}</ListGroupItem>
-              <ListGroupItem>Description: {product.description}</ListGroupItem>
+              </ListGroup.Item>
+              <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
+              <ListGroup.Item>
+                Description: {product.description}
+              </ListGroup.Item>
             </ListGroup>
           </Col>
           <Col md={3}>
             <Card>
               <ListGroup variant='flush'>
-                <ListGroupItem>
+                <ListGroup.Item>
                   <Row>
                     <Col>Price</Col>
                     <Col>
                       <strong>${product.price}</strong>
                     </Col>
                   </Row>
-                </ListGroupItem>
-                <ListGroupItem>
+                </ListGroup.Item>
+                <ListGroup.Item>
                   <Row>
                     <Col>Status:</Col>
                     <Col>
                       {product.countInStock > 0 ? 'In Stock' : 'Out Of Stock'}
                     </Col>
                   </Row>
-                </ListGroupItem>
+                </ListGroup.Item>
                 {product.countInStock > 0 && (
                   <ListGroup.Item>
                     <Row>
@@ -101,7 +101,7 @@ const ProductScreen = (history) => {
                   </ListGroup.Item>
                 )}
 
-                <ListGroupItem>
+                <ListGroup.Item>
                   <Button
                     onClick={addToCartHandler}
                     className='btn-block'
@@ -110,7 +110,7 @@ const ProductScreen = (history) => {
                   >
                     Add To Cart
                   </Button>
-                </ListGroupItem>
+                </ListGroup.Item>
               </ListGroup>
             </Card>
           </Col>

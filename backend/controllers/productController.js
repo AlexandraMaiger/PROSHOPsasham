@@ -15,15 +15,16 @@ const getProducts = asyncHandler(async (req, res) => {
 // @route GET /api/products/:id
 // @access Public
 
-const getProductsById = asyncHandler(async (req, res) => {
-  const product = await Product.find({})
+// Cant use params in backend
+const getProductById = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id)
 
   if (product) {
     res.json(product)
   } else {
     res.status(404)
-    throw new Error('Not  not found')
+    throw new Error('Product not found')
   }
 })
 
-export { getProducts, getProductsById }
+export { getProducts, getProductById }

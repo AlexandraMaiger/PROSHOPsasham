@@ -6,16 +6,20 @@ import Message from '../components/Message'
 import { addToCart, removeFromCart } from '../actions/cartActions'
 
 const CartScreen = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
   const params = useParams()
+
   const productId = params.id
 
+  const location = useLocation()
+
   const qty = location.search ? Number(location.search.split('=')[1]) : 1
+
+  const navigate = useNavigate()
 
   const dispatch = useDispatch()
 
   const cart = useSelector((state) => state.cart)
+
   const { cartItems } = cart
 
   useEffect(() => {
@@ -28,17 +32,17 @@ const CartScreen = () => {
     dispatch(removeFromCart(id))
   }
 
-  const checkoutHandlar = () => {
-    navigate('/login?redirect=shipping')
+  const checkoutHandler = () => {
+    navigate(`/login?redirect=${'/shipping'}`)
   }
 
   return (
     <Row>
       <Col md={8}>
         <h1>Shopping Cart</h1>
-        {cartItems.legnth === 0 ? (
+        {cartItems.length === 0 ? (
           <Message>
-            Your cart is empty<Link to='/'>Go Back</Link>
+            Your cart is empty <Link to='/'>Go Back</Link>
           </Message>
         ) : (
           <ListGroup variant='flush'>
@@ -86,7 +90,7 @@ const CartScreen = () => {
       </Col>
       <Col md={4}>
         <Card>
-          <ListGroup variant='flash'>
+          <ListGroup variant='flush'>
             <ListGroup.Item>
               <h2>
                 Subtotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)})
@@ -101,10 +105,10 @@ const CartScreen = () => {
               <Button
                 type='button'
                 className='btn-block'
-                disabled={cartItems.legnth === 0}
-                onClick={checkoutHandlar}
+                disabled={cartItems.length === 0}
+                onClick={checkoutHandler}
               >
-                Procced To Checkout
+                Proceed To Checkout
               </Button>
             </ListGroup.Item>
           </ListGroup>

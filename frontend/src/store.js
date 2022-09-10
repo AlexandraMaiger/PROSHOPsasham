@@ -1,32 +1,74 @@
-// import { combineReducers, applyMiddleware } from 'redux'
-// import { createStore, configureStore } from '@reduxjs/toolkit'
+// import { configureStore } from '@reduxjs/toolkit'
 // import thunk from 'redux-thunk'
-// import { composeWithDevTools } from 'redux-devtools-extension'
+// import {
+//   productListReducer,
+//   productDetailsReducer,
+// } from './reducers/productRedusers'
+// import { cartReduser } from './reducers/cartRedusers'
+// import { userLoginReducer, userRegisterReducer } from './reducers/userReducers'
+// //createStore
 
-// const initialState = {}
+// const cartItemsFromStorage = localStorage.getItem('cartItems')
+//   ? JSON.parse(localStorage.getItem('cartItems'))
+//   : []
 
-// const reducer = {}
+// const userInfoFromStorage = localStorage.getItem('userInfo')
+//   ? JSON.parse(localStorage.getItem('userInfo'))
+//   : null
+
+// const shippingAddressFromStorage = localStorage.getItem('shippingAddress')
+//   ? JSON.parse(localStorage.getItem('shippingAddress'))
+//   : {}
 
 // const middleware = [thunk]
 
 // const store = configureStore({
-//   reducer,
+//   reducer: {
+//     productList: productListReducer,
+//     productDeatil: productDetailsReducer,
+//     cart: cartReduser,
+//     userLogin: userLoginReducer,
+//     userRegister: userRegisterReducer,
+//   },
+//   preloadedState: {
+//     cart: { cartItems: cartItemsFromStorage },
+//     userLogin: { userInfo: userInfoFromStorage },
+//   },
 //   middleware,
-//   devTools: process.env.NODE_ENV !== 'production',
-//   preloadedState: initialState,
 // })
 
 // export default store
-
-import { configureStore } from '@reduxjs/toolkit'
+//////////////////////////////////////////////////
+import { createStore, combineReducers, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
+import { composeWithDevTools } from 'redux-devtools-extension'
 import {
   productListReducer,
   productDetailsReducer,
 } from './reducers/productRedusers'
 import { cartReduser } from './reducers/cartRedusers'
-import { userLoginReducer, userRegisterReducer } from './reducers/userReducers'
-//createStore
+import {
+  userLoginReducer,
+  userRegisterReducer,
+  userUpdateProfileReducer,
+  userDetailsReducer,
+} from './reducers/userReducers'
+import {
+  orderCreateReducer,
+  orderDetailsReducer,
+} from './reducers/orderReducers'
+
+const reducer = combineReducers({
+  productList: productListReducer,
+  productDetails: productDetailsReducer,
+  cart: cartReduser,
+  userLogin: userLoginReducer,
+  userRegister: userRegisterReducer,
+  userDetails: userDetailsReducer,
+  userUpdateProfile: userUpdateProfileReducer,
+  orderCreate: orderCreateReducer,
+  orderDetails: orderDetailsReducer,
+})
 
 const cartItemsFromStorage = localStorage.getItem('cartItems')
   ? JSON.parse(localStorage.getItem('cartItems'))
@@ -36,21 +78,24 @@ const userInfoFromStorage = localStorage.getItem('userInfo')
   ? JSON.parse(localStorage.getItem('userInfo'))
   : null
 
+const shippingAddressFromStorage = localStorage.getItem('shippingAddress')
+  ? JSON.parse(localStorage.getItem('shippingAddress'))
+  : []
+
+const initialState = {
+  cart: {
+    cartItems: cartItemsFromStorage,
+    shippingAddress: shippingAddressFromStorage,
+  },
+  userLogin: { userInfo: userInfoFromStorage },
+}
+
 const middleware = [thunk]
 
-const store = configureStore({
-  reducer: {
-    productsReducer: productListReducer,
-    productDeatil: productDetailsReducer,
-    cart: cartReduser,
-    userLogin: userLoginReducer,
-    userRegister: userRegisterReducer,
-  },
-  preloadedState: {
-    cart: { cartItems: cartItemsFromStorage },
-    userLogin: { userInfo: userInfoFromStorage },
-  },
-  middleware,
-})
+const store = createStore(
+  reducer,
+  initialState,
+  composeWithDevTools(applyMiddleware(...middleware))
+)
 
 export default store
