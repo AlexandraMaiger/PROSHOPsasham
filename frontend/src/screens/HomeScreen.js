@@ -39,27 +39,41 @@
 // export default HomeScreen
 ////////////////////////////////////////
 import React, { useEffect } from 'react'
-// import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Row, Col } from 'react-bootstrap'
 import Product from '../components/Product'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
-
+import { Row, Col } from 'react-bootstrap'
 import { listProducts } from '../actions/productActions'
+import Loader from '../components/Loader'
+import Paginate from '../components/Paginate'
+import Message from '../components/Message'
+import ProductCarousel from '../components/ProductCarousel'
 
 const HomeScreen = () => {
   const dispatch = useDispatch()
+  const params = useParams()
+
+  const keyword = params.keyword
+
+  const pageNumber = params.pageNumber || 1
 
   const productList = useSelector((state) => state.productList)
-  const { loading, error, products } = productList
+  const { loading, error, products, page, pages } = productList
 
   useEffect(() => {
-    dispatch(listProducts())
-  }, [dispatch])
+    dispatch(listProducts(keyword, pageNumber))
+  }, [dispatch, keyword, pageNumber])
 
   return (
     <>
+      {!keyword ? (
+        <ProductCarousel />
+      ) : (
+        <Link to='/' className='btn btn-light'>
+          Go Back
+        </Link>
+      )}
       <h1>Latest Products</h1>
       {loading ? (
         <Loader />
@@ -74,6 +88,11 @@ const HomeScreen = () => {
               </Col>
             ))}
           </Row>
+          <Paginate
+            pages={pages}
+            page={page}
+            keyword={keyword ? keyword : ''}
+          />
         </>
       )}
     </>
